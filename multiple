@@ -1,0 +1,123 @@
+import numpy as np
+import pandas as pd
+import scipy.stats as s
+
+#transpose
+def transpose(arr):
+    t=[]
+    for i in range(len(arr[0])):
+        T=[]
+        for j in range(len(arr)):
+            T.append(arr[j][i])
+        t.append(T)
+    return t
+    #multipliction
+    def mul(a,b):
+    c=[]
+    n=len(a)
+    m=len(a[0])
+    q=len(b[0])
+    for i in range(n):
+        C=[]
+        for j in range(q):
+            multi=0
+            for k in range(m):
+                multi=multi+a[i][k]*b[k][j]
+            C.append(round(multi,4))
+        c.append(C)
+    return c
+    #inverse
+    def inverse(a):
+    n=len(a)
+    m=len(a[0])
+    cofactor=[]
+    det=0
+    if n==2 and m==2:
+        cofactor.append([a[1][1],-1*a[0][1]])
+        cofactor.append(-1*[a[1][0],a[0][0]])
+        det=cofactor[0][0]*cofactor[1][1]-cofactor[0][1]*cofactor[1][0]
+    else:
+        for i in range(n):
+            co=[]
+            for j in range(m):
+                c=[]
+                for k in range(n):
+                    for o in range(m):
+                        if i!=k and j!=o:
+                            c.append(a[k][o])
+                if (i+j)%2!=0:
+                    q=-1*(c[0]*c[3]-c[1]*c[2])
+                else:
+                    q=(c[0]*c[3]-c[1]*c[2])
+                co.append(q)
+                if i==0:
+                    det=det+a[i][j]*q
+            cofactor.append(co)
+        inv=transpose(cofactor)
+    ine=inv/det
+    return ine           
+    
+df=pd.read_csv('mutliple.csv')
+print(df)
+
+#beta_hat=(x'x)-1(x'y)
+df['x0']=[1]*len(df)
+x=df[['x0','% of absent','breakdowns']].to_numpy()
+y=df[['sales']].to_numpy()
+
+#calculate x'x and x'y and (x'x)(x'y)
+x1=transpose(x)
+x1x=mul(x1,x)
+inv=inverse(x1x)
+x1y=mul(x1,y)
+beta_hat=mul(inv,x1y)
+print("y =",beta_hat[0][0],"+ x1",beta_hat[1][0],"+ x2",beta_hat[2][0])
+
+#test of goodness of fit using coefficient of determination
+y_hat=[]
+error=[]
+for i in range(len(x)):
+    s=beta_hat[0][0]+x[i][1]*beta_hat[1][0]+x[i][2]*beta_hat[2][0]
+    y_hat.append(round(s,4))
+    error.append(round(y[i][0]-s,4))
+d=pd.DataFrame({'y_hat':y_hat,'error':error})
+print(d)
+
+#calculations
+sse=sum(np.array(error)**2)
+y_bar=sum(y)/len(y)
+sst=sum((y-y_bar)**2)
+ssr=sst-sse
+R2=ssr/sst
+print(R2)
+
+if R2<0.9:
+    print("The Regression model is not good fit")
+else:
+    print("The Regression model is good fit")
+ 
+#to test goodness of fit using anova
+
+#degree of freedom
+n1=len(x[0])-1
+n2=len(x)-1
+
+msr=ssr/n1
+mse=sse/n2
+f=msr/mse
+f=f[0]
+if f<1:
+    f=mse/msr
+print("Calculated value",round(f,4))
+
+#table value
+f_tab=s.f.ppf(0.95,n1,n2)
+print("Table value",round(f_tab,4))
+
+if f<f_tab:
+    print("H0 is Accepted")
+    print("Hence we conclude that there is no regression parameter that influence in the model.")
+else:
+    print("H0 is Rejected")
+    print("Hence we conclude that there is atleast one regression parameter that influence in the model.")
+    
