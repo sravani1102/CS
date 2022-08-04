@@ -1,0 +1,24 @@
+def inverse(a):
+    n=len(a)
+    m=len(a[0])
+    cofactor=[]
+    det=0
+    for i in range(n):
+        co=[]
+        for j in range(m):
+            c=[]
+            for k in range(n):
+                for o in range(m):
+                    if i!=k and j!=o:
+                        c.append(a[k][o])
+            if (i+j)%2!=0:
+                q=-1*(c[0]*c[3]-c[1]*c[2])
+            else:
+                q=(c[0]*c[3]-c[1]*c[2])
+            co.append(q)
+            if i==0:
+                det=det+a[i][j]*q
+        cofactor.append(co)
+    inv=transpose(cofactor)
+    ine=inv/det
+    return ine           
