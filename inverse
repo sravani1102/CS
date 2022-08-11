@@ -1,24 +1,51 @@
+#inverse
 def inverse(a):
     n=len(a)
     m=len(a[0])
     cofactor=[]
     det=0
-    for i in range(n):
-        co=[]
-        for j in range(m):
-            c=[]
-            for k in range(n):
-                for o in range(m):
-                    if i!=k and j!=o:
-                        c.append(a[k][o])
-            if (i+j)%2!=0:
-                q=-1*(c[0]*c[3]-c[1]*c[2])
-            else:
-                q=(c[0]*c[3]-c[1]*c[2])
-            co.append(q)
-            if i==0:
-                det=det+a[i][j]*q
-        cofactor.append(co)
-    inv=transpose(cofactor)
-    ine=inv/det
-    return ine           
+    if n==2 and m==2:
+        cofactor.append([a[1][1],-1*a[0][1]])
+        cofactor.append(-1*[a[1][0],a[0][0]])
+        det=cofactor[0][0]*cofactor[1][1]-cofactor[0][1]*cofactor[1][0]
+    else:
+        for i in range(n):
+            co=[]
+            for j in range(m):
+                c=[]
+                for k in range(n):
+                    for o in range(m):
+                        if i!=k and j!=o:
+                            c.append(a[k][o])
+                if (i+j)%2!=0:
+                    q=-1*(c[0]*c[3]-c[1]*c[2])
+                else:
+                    q=(c[0]*c[3]-c[1]*c[2])
+                co.append(q)
+                if i==0:
+                    det=det+a[i][j]*q
+            cofactor.append(co)
+        inv=transpose(cofactor)
+    if det==0:
+        return [[-1]]
+    else:
+        ine=inv/det
+        return ine
+ #transpose
+def transpose(arr):
+    t=[]
+    for i in range(len(arr[0])):
+        T=[]
+        for j in range(len(arr)):
+            T.append(arr[j][i])
+        t.append(T)
+    return t
+
+import numpy as np
+a=[[1,2,3],[4,5,6],[7,8,9]]
+a=np.array(a)
+inv=inverse(a)
+if len(inv)==1:
+    print("singular matrix")
+else:
+    print(inv)
