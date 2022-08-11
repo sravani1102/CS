@@ -11,8 +11,9 @@ def transpose(arr):
             T.append(arr[j][i])
         t.append(T)
     return t
-    #multipliction
-    def mul(a,b):
+    
+#multipliction
+def mul(a,b):
     c=[]
     n=len(a)
     m=len(a[0])
@@ -26,8 +27,9 @@ def transpose(arr):
             C.append(round(multi,4))
         c.append(C)
     return c
-    #inverse
-    def inverse(a):
+    
+#inverse
+def inverse(a):
     n=len(a)
     m=len(a[0])
     cofactor=[]
@@ -62,8 +64,8 @@ print(df)
 
 #beta_hat=(x'x)-1(x'y)
 df['x0']=[1]*len(df)
-x=df[['x0','% of absent','breakdowns']].to_numpy()
-y=df[['sales']].to_numpy()
+x=df[['x0','x1','x2']].to_numpy()
+y=df[['y']].to_numpy()
 
 #calculate x'x and x'y and (x'x)(x'y)
 x1=transpose(x)
@@ -100,7 +102,7 @@ else:
 
 #degree of freedom
 n1=len(x[0])-1
-n2=len(x)-1
+n2=len(x)-len(x[0])
 
 msr=ssr/n1
 mse=sse/n2
@@ -121,3 +123,26 @@ else:
     print("H0 is Rejected")
     print("Hence we conclude that there is atleast one regression parameter that influence in the model.")
     
+#test of individual variables
+cij=[inv[0][0],inv[1][1],inv[2][2]]
+t_cal=[]
+print("Calculated value :")
+for i in range(len(cij)):
+    se=sqrt(mse*cij[i])
+    t=beta_hat[i][0]
+    t_cal.append(round(t/se,4))
+    print("beta",i,"=",t_cal[i])
+
+#table value
+t_tab=stats.t.ppf(1-0.05/2,n2)
+print("Table value",round(t_tab,4))
+
+weak_variable=-1
+for i in range(len(t_cal)):
+    if t_tab>t_cal[i]:
+        print("H0 is accepted.\nHence the parameter beta",i,"is not influencing the model")
+        weak_variable=i
+    else:
+        print("H0 is rejected.\nHence the parameter beta",i,"is influencing the model")
+        
+print("Therefore,The weak variable is beta",weak_variable)
