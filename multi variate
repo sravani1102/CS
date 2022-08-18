@@ -1,0 +1,116 @@
+import numpy as np
+import pandas as pd
+import scipy.stats as stats
+
+
+df=pd.read_csv('multivariate.csv')
+print(df)
+
+#output
+    month  y1   y2  x1  x2   x3
+0       1  10  100   9  62  1.0
+1       2  12  110   8  58  1.3
+2       3  11  105   7  64  1.2
+3       4   9   94  14  60  0.8
+4       5   9   95  12  63  0.8
+5       6  10   99  10  57  0.9
+6       7  11  104   7  55  1.0
+7       8  12  108   4  56  1.2
+8       9  11  105   6  59  1.1
+9      10  10   98   5  61  1.0
+10     11  11  103   7  57  1.2
+11     12  12  110   6  60  1.2
+
+
+#beta ground=(x'x)-1*(x'y)
+df['x0']=[1]*len(df)
+x=df[['x0','x1','x2','x3']].to_numpy()
+y=df[['y1','y2']].to_numpy()
+x1x=mul(transpose(x),x)
+x1y=mul(transpose(x),y)
+inv=np.linalg.inv(x1x)
+beta=np.array(mul(inv,x1y))
+print("y1 =",beta[0][0],"+",beta[1][0],"x1 +",beta[2][0],"x2 +",beta[3][0],"x3")
+print("y2 =",beta[0][1],"+",beta[1][1],"x1 +",beta[2][1],"x2 +",beta[3][1],"x3")
+
+#output
+y1 = 10.897 + -0.0449 x1 + -0.0877 x2 + 5.0355 x3
+y2 = 91.0972 + -0.064 x1 + -0.2944 x2 + 27.8353 x3
+
+
+#test of goodness of fit using coefficient of determination
+y_hat=x@beta
+error=y-y_hat
+sse=np.sum(error**2,axis=0)
+mean=np.sum(y,axis=0)/len(y)
+sst=np.sum((y-mean)**2,axis=0)
+ssr=sst-sse
+R2=ssr/sst
+
+
+def test(r2):
+    if r2<0.9:
+        print("The Regression model is not good fit")
+    else:
+        print("The Regression model is good fit")
+print("For y1 R2 is:",round(R2[0],4))
+test(R2[0])
+print("For y2 R2 is:",round(R2[0],4))
+test(R2[1])
+
+#output
+
+For y1 R2 is: 0.9238
+The Regression model is good fit
+For y2 R2 is: 0.9238
+The Regression model is not good fit
+
+
+#to test goodness of fit using anova
+
+def cal_value(f_cal):
+    if f_cal<1:
+        f_cal=mse/msr
+    print("Calculated value",round(f_cal,4))
+#degree of freedom
+n1=len(x[0])-1
+n2=len(x)-len(x[0])
+
+msr=ssr/n1
+mse=sse/n2
+f=msr/mse
+
+cal_value(f[0])
+cal_value(f[1])
+
+#output
+Calculated value 32.3272
+Calculated value 17.1613
+
+#table value
+f_tab=stats.f.ppf(0.95,n1,n2)
+print("Table value",round(f_tab,4))
+
+#table value
+Table value 4.0662
+
+def test(f_cal):
+    if f_cal<f_tab:
+        print("H0 is Accepted")
+        print("Hence we conclude that there is no regression parameter that influence in the model.")
+    else:
+        print("H0 is Rejected")
+        print("Hence we conclude that there is atleast one regression parameter that influence in the model.")
+print("For y1 :")
+test(f[0])
+print("For y2 :")
+test(f[1])
+
+#ouput
+
+For y1 :
+H0 is Rejected
+Hence we conclude that there is atleast one regression parameter that influence in the model.
+For y2 :
+H0 is Rejected
+Hence we conclude that there is atleast one regression parameter that influence in the model.
