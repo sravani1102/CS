@@ -114,3 +114,72 @@ Hence we conclude that there is atleast one regression parameter that influence 
 For y2 :
 H0 is Rejected
 Hence we conclude that there is atleast one regression parameter that influence in the model.
+
+#testing individual parameters
+t=[]
+for i in range(len(x1x)):
+    se1=sqrt(mse[0]*x1x[i][i])
+    se2=sqrt(mse[1]*x1x[i][i])
+    t1=round(beta[i][0]/se1,4)
+    t2=round(beta[i][1]/se2,4)
+    t.append([t1,t2])
+for i in range(len(t[0])):
+    print("t calculated value for y"+str(i+1))
+    for j in range(len(t)):
+        print("beta"+str(j)+":",t[j][i])
+        
+#output
+
+t calculated value for y1
+beta0: 9.0561
+beta1: -0.0044
+beta2: -0.0012
+beta3: 3.9095
+t calculated value for y2
+beta0: 11.2519
+beta1: -0.0009
+beta2: -0.0006
+beta3: 3.2119
+
+t_tab=round(stats.t.ppf(1-0.05/2,n2),4)
+print("Table Value :",t_tab)
+
+#output
+
+Table Value : 2.306
+
+#testing the weak parameters
+for i in range(len(t[0])):
+    print("For y"+str(i+1)+" :")
+    weak_variable=[]
+    for j in range(len(t)):
+        if t_tab>t[j][i]:
+            print("H0 is accepted.\nHence the parameter beta",i,"is not influencing the model")
+            weak_variable.append(j)
+        else:
+            print("H0 is rejected.\nHence the parameter beta",i,"is influencing the model")
+    print("\nTherefore,The weak variable is beta",weak_variable)
+ 
+#output
+For y1 :
+H0 is rejected.
+Hence the parameter beta 0 is influencing the model
+H0 is accepted.
+Hence the parameter beta 0 is not influencing the model
+H0 is accepted.
+Hence the parameter beta 0 is not influencing the model
+H0 is rejected.
+Hence the parameter beta 0 is influencing the model
+
+Therefore,The weak variable is beta [1, 2]
+For y2 :
+H0 is rejected.
+Hence the parameter beta 1 is influencing the model
+H0 is accepted.
+Hence the parameter beta 1 is not influencing the model
+H0 is accepted.
+Hence the parameter beta 1 is not influencing the model
+H0 is rejected.
+Hence the parameter beta 1 is influencing the model
+
+Therefore,The weak variable is beta [1, 2]
