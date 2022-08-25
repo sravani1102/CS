@@ -55,14 +55,14 @@ def test(r2):
         print("The Regression model is good fit")
 print("For y1 R2 is:",round(R2[0],4))
 test(R2[0])
-print("For y2 R2 is:",round(R2[0],4))
+print("For y2 R2 is:",round(R2[1],4))
 test(R2[1])
 
 #output
 
 For y1 R2 is: 0.9238
 The Regression model is good fit
-For y2 R2 is: 0.9238
+For y2 R2 is: 0.8655
 The Regression model is not good fit
 
 
