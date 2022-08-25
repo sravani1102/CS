@@ -117,9 +117,9 @@ Hence we conclude that there is atleast one regression parameter that influence 
 
 #testing individual parameters
 t=[]
-for i in range(len(x1x)):
-    se1=sqrt(mse[0]*x1x[i][i])
-    se2=sqrt(mse[1]*x1x[i][i])
+for i in range(len(inv)):
+    se1=sqrt(mse[0]*inv[i][i])
+    se2=sqrt(mse[1]*inv[i][i])
     t1=round(beta[i][0]/se1,4)
     t2=round(beta[i][1]/se2,4)
     t.append([t1,t2])
@@ -131,15 +131,15 @@ for i in range(len(t[0])):
 #output
 
 t calculated value for y1
-beta0: 9.0561
-beta1: -0.0044
-beta2: -0.0012
-beta3: 3.9095
+beta0: 4.2373
+beta1: -0.8276
+beta2: -2.2751
+beta3: 5.4618
 t calculated value for y2
-beta0: 11.2519
-beta1: -0.0009
-beta2: -0.0006
-beta3: 3.2119
+beta0: 5.2648
+beta1: -0.1753
+beta2: -1.1351
+beta3: 4.4872
 
 t_tab=round(stats.t.ppf(1-0.05/2,n2),4)
 print("Table Value :",t_tab)
