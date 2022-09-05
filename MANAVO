@@ -1,0 +1,173 @@
+import numpy as np
+import scipy.stats as stats
+from math import sqrt
+
+m=int(input('Enter number of treatments : '))
+t=[]
+for i in range(m):
+  print("Enter Treatment",(i+1))
+  y1=[int(x) for x in input().split()]
+  y2=[int(x) for x in input().split()]
+  t.append([y1,y2])
+
+#read
+
+Enter number of treatments : 3
+Enter Treatment 1
+2 3 5 2
+3 4 4 5
+Enter Treatment 2
+4 5 6
+8 6 7
+Enter Treatment 3
+7 8 10 9 7
+6 7 8 5 6
+
+for i in range(m):
+  print("Treatment",i+1)
+  print(t[i][0])
+  print(t[i][1])
+
+#output
+Treatment 1
+[2, 3, 5, 2]
+[3, 4, 4, 5]
+Treatment 2
+[4, 5, 6]
+[8, 6, 7]
+Treatment 3
+[7, 8, 10, 9, 7]
+[6, 7, 8, 5, 6]
+
+t_mean=[]
+total=[0,0]
+t_size=0
+for i in range(m):
+  y1=np.array(t[i][0])
+  y2=np.array(t[i][1])
+  t_mean.append([sum(y1)/len(y1),sum(y2)/len(y2)])
+  total[0]+=sum(y1)
+  total[1]+=sum(y2)
+  t_size+=len(y1)
+total[0]=total[0]/t_size
+total[1]=total[1]/t_size
+
+print("Yi mean")
+for i in range(m):
+  print(t_mean[i])
+print("Y mean")
+print(total)
+
+#output
+Yi mean
+[3.0, 4.0]
+[5.0, 7.0]
+[8.2, 6.4]
+Y mean
+[5.666666666666667, 5.75]
+
+def calculations(t,t_mean,total,y):
+  sse=0
+  sst=0
+  for i in range(m):
+    for j in range(len(t[i][0])):
+      if y==-1:
+        sse+=t[i][0][j]*t[i][1][j]-t_mean[i][0]*t_mean[i][1]
+        sst+=t[i][0][j]*t[i][1][j]-total[0]*total[1]
+      else:
+        sse+=(t[i][y][j]-t_mean[i][y])**2
+        sst+=(t[i][y][j]-total[y])**2
+  return sse,sst
+
+
+sse_y1,sst_y1=calculations(t,t_mean,total,0)
+ssr_y1=sst_y1-sse_y1
+sse_y2,sst_y2=calculations(t,t_mean,total,1)
+ssr_y2=sst_y2-sse_y2
+sse_y,sst_y=calculations(t,t_mean,total,-1)
+ssr_y=sst_y-sse_y
+
+print("For y1 :")
+print("sse =",sse_y1,end=" , ")
+print("sst =",sst_y1,end=" , ")
+print("ssr =",ssr_y1)
+print("For y2 :")
+print("sse =",sse_y2,end=" , ")
+print("sst =",sst_y2,end=" , ")
+print("ssr =",ssr_y2)
+print("Cross product values of y1 and y2 :")
+print("sse =",sse_y,end=" , ")
+print("sst =",sst_y,end=" , ")
+print("ssr =",ssr_y)
+
+#output
+
+For y1 :
+sse = 14.799999999999997 , sst = 76.66666666666667 , ssr = 61.866666666666674
+For y2 :
+sse = 9.2 , sst = 28.25 , ssr = 19.05
+Cross product values of y1 and y2 :
+sse = 1.6000000000000156 , sst = 25.999999999999943 , ssr = 24.399999999999928
+
+#sum of squares
+B=np.array([ssr_y1,ssr_y,ssr_y,ssr_y2]).reshape(2,2)
+W=np.array([sse_y1,sse_y,sse_y,sse_y2]).reshape(2,2)
+T=np.array([sst_y1,sst_y,sst_y,sst_y2]).reshape(2,2)
+print("Regression :\n",B)
+print("Error :\n",W)
+print("Total :\n",T)
+
+#output
+
+Regression :
+ [[61.86666667 24.4       ]
+ [24.4        19.05      ]]
+Error :
+ [[14.8  1.6]
+ [ 1.6  9.2]]
+Total :
+ [[76.66666667 26.        ]
+ [26.         28.25      ]]
+ 
+#Degree of Freedom
+d1=m-1
+n=0
+for i in range(m):
+  n=n+len(t[i][0])
+d2=n-m
+print("Degree of Freedom :",d1,",",d2)
+
+#output
+Degree of Freedom : 2 , 9
+
+def det(A):
+  return A[0][0]*A[1][1]-A[0][1]*A[1][0]
+  
+wilks=det(W)/det(T)
+print("Wilk's Value :",round(wilks,4))
+
+#output
+
+Wilk's Value : 0.0897
+
+f=((n-m-1)/(m-1))*(1-sqrt(wilks))/sqrt(wilks)
+print("Calculate value :",round(f,4))
+
+#output
+Calculate value : 9.3575
+
+tab=stats.f.ppf(0.95,2*(m-1),2*(n-m-1))
+print("Table Value :",round(tab,4))
+
+#output
+
+Table Value : 3.0069
+
+if f>tab:
+  print("H0 is Rejected.Hence we conclude that their is no homogenity among regression model")
+else:
+  print("H0 is Accepted.Hence we conclude that their is homogenity among regression model")
+  
+#output
+
+H0 is Rejected.Hence we conclude that their is no homogenity among regression model
