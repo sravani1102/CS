@@ -1,0 +1,40 @@
+sat=int(input('Enter incoming student SAT : '))
+gpa=float(input('Enter incoming student GPA : '))
+
+#input
+
+Enter incoming student SAT : 1000
+Enter incoming student GPA : 2.9
+
+df['x0']=[1]*len(df)
+x=df[['x0','x1','x2']]
+x=np.array(x,dtype=float)
+y=df[['y']].replace('yes',1)
+y=df[['y']].replace('no',0)
+y=np.array(y)
+
+#beta hat
+x1x=mul(transpose(x),x)
+inv=np.linalg.inv(x1x)
+x1y=mul(transpose(x),y)
+beta_hat=mul(inv,x1y)
+
+print("y = ",beta_hat[0][0],"+",beta_hat[1][0],"x1 +",beta_hat[2][0],"x2")
+
+#ouput
+y =  -3.8392 + 0.0032 x1 + 0.2395 x2
+
+new_y=beta_hat[0][0]+beta_hat[1][0]*sat+beta_hat[2][0]*gpa
+print(new_y)
+
+#output
+0.05535000000000023
+
+if round(new_y)==0:
+    print("The value is nearer to zero.Therefore, the candidate will not graduated.")
+else:
+    print("The value is nearer to one.Therefore, the candidate will graduated.")
+
+#output
+
+The value is nearer to zero.Therefore, the candidate will not graduated.
