@@ -1,0 +1,121 @@
+import pandas as pd
+import numpy as np
+from math import log
+
+print("Enter new matrix")
+l=[float(x) for x in input().split()]
+
+#ouput
+Enter new matrix
+5.1 3.2
+
+df=pd.read_csv('fishers.csv')
+print(df)
+x_1=[]
+x_2=[]
+for i in range(len(df)):
+    if df['y'][i]==1:
+        x_1.extend([df['x1'][i],df['x2'][i]])
+    else:
+        x_2.extend([df['x1'][i],df['x2'][i]])
+x=df[['x1','x2']].to_numpy()
+x_1=np.array(x_1).reshape(len(x_1)//2,2)
+x_2=np.array(x_2).reshape(len(x_2)//2,2)
+
+#ouput
+    x1  x2  y
+0    1   2  1
+1    2   3  1
+2    3   3  1
+3    4   5  1
+4    5   5  1
+5    4   2  0
+6    5   0  0
+7    5   2  0
+8    3   2  0
+9    5   3  0
+10   6   3  0
+
+print("x :\n",x)
+print("\nx1 :\n",x_1)
+print("\nx2 :\n",x_2)
+
+#output
+
+x :
+ [[1 2]
+ [2 3]
+ [3 3]
+ [4 5]
+ [5 5]
+ [4 2]
+ [5 0]
+ [5 2]
+ [3 2]
+ [5 3]
+ [6 3]]
+
+x1 :
+ [[1 2]
+ [2 3]
+ [3 3]
+ [4 5]
+ [5 5]]
+
+x2 :
+ [[4 2]
+ [5 0]
+ [5 2]
+ [3 2]
+ [5 3]
+ [6 3]]
+ 
+mean=np.mean(x,axis=0)
+mean_1=np.mean(x_1,axis=0)
+mean_2=np.mean(x_2,axis=0)
+
+print("mean for x :",mean)
+print("mean for x_1 :",mean_1)
+print("mean for x_2 :",mean_2)
+
+#output
+mean for x : [3.90909091 2.72727273]
+mean for x_1 : [3.  3.6]
+mean for x_2 : [4.66666667 2.        ]
+
+xm=x-mean
+c=mul(transpose(xm),xm)
+c=np.array(c)/len(x)
+c_inv=np.linalg.inv(c)
+print("Pooled covariance matrix :\n",c)
+
+#output
+
+Pooled covariance matrix :
+ [[2.08264545 0.15702727]
+ [0.15702727 1.83470909]]
+ 
+def fisherEquation(mean,c_inv,x,p):
+    m_c=mul([mean],c_inv)
+    f=mul(m_c,x)[0][0]-0.5*mul(m_c,transpose([mean]))[0][0]+log(p)
+    return f
+
+f1=fisherEquation(mean_1,c_inv,transpose([l]),len(x_1)/len(x))
+f2=fisherEquation(mean_2,c_inv,transpose([l]),len(x_2)/len(x))
+
+print("f1 =",f1)
+print("f2 =",f2)
+
+#output
+f1 = 6.48594263963573
+f2 = 7.393764196429685
+
+if f1>f2:
+    print("The new observation",l,"is classified into group 1")
+else:
+    print("The new observation",l,"is classified into group 2")
+
+#output
+
+The new observation [5.1, 3.2] is classified into group 2
+ 
