@@ -1,0 +1,66 @@
+ANOVA ONE WAY CLASSIFICATION
+#import libraries
+import numpy as np
+import scipy.stats as stats
+
+#read input
+a=[int(x) for x in input().split()]
+b=[int(x) for x in input().split()]
+c=[int(x) for x in input().split()]
+fa=np.array(a)
+fb=np.array(b)
+fc=np.array(c)
+
+print(fa)
+print(fb)
+print(fc)
+
+#read level of significance
+print("Level of significance :")
+alpha=float(input())
+
+#calculate rss,cf,sst,sstr,sse
+N=np.size(fa)+np.size(fb)+np.size(fc)
+rss=np.sum(fa**2)+np.sum(fb**2)+np.sum(fc**2)
+cf=(np.sum(fa)+np.sum(fb)+np.sum(fc))**2/(N)
+sst=rss-cf
+sstr=(np.sum(fa)**2/np.size(fa)+np.sum(fb)**2/np.size(fb)+np.sum(fc)**2/np.size(fc))-cf
+sse=sst-sstr
+print("rss=",rss)
+print("cf=",cf)
+print("sst=",sst)
+print("sstr=",sstr)
+print("sse=",sse)
+
+#degree of freedom
+k=3
+d1=k-1
+d2=N-k
+print("Degree of freedom of treatments =",d1)
+print("Degree of freedom of error =",d2)
+
+
+
+#calculate f
+
+msstr=sstr/d1
+msse=sse/d2
+F=msstr/msse
+if F<1:
+  F=msse/msstr
+print("Calculated value :",F)
+
+
+#table value
+
+tablevalue=stats.f.ppf(1-alpha,d1,d2)
+print("Table value :",round(tablevalue,4))
+
+
+#testing
+
+if tablevalue>F:
+  print("H0 is accepted.")
+else:
+  print("H0 is rejected.")
+
