@@ -47,10 +47,10 @@ print("y = ",beta_hat[0][0],"+",beta_hat[1][0],"x1 +",beta_hat[2][0],"x2")
 y =  -3.8392 + 0.0032 x1 + 0.2395 x2
 
 new_y=beta_hat[0][0]+beta_hat[1][0]*sat+beta_hat[2][0]*gpa
-print(new_y)
+print("new_y =",new_y)
 
 #output
-0.05535000000000023
+new_y = 0.05535000000000023
 
 if round(new_y)==0:
     print("The value is nearer to zero.Therefore, the candidate will not graduated.")
